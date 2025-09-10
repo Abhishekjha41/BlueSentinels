@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
-import { Dashboard } from "@/components/Dashboard";
+import { Dashboard as DashboardComponent } from "@/components/Dashboard";
 import { ReportForm } from "@/components/ReportForm";
 import { InteractiveMap } from "@/components/InteractiveMap";
 import { Button } from "@/components/ui/button";
@@ -22,9 +23,26 @@ import {
 
 type ViewType = "dashboard" | "report" | "map";
 
-const Index = () => {
+const Dashboard = () => {
+  const navigate = useNavigate();
   const [currentRole, setCurrentRole] = useState<"citizen" | "official">("citizen");
   const [currentView, setCurrentView] = useState<ViewType>("dashboard");
+
+  // Check authentication
+  useEffect(() => {
+    const authData = localStorage.getItem("oceanwatch_auth");
+    if (!authData) {
+      navigate("/login");
+      return;
+    }
+    
+    try {
+      const auth = JSON.parse(authData);
+      setCurrentRole(auth.role);
+    } catch (error) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleViewChange = (view: ViewType) => {
     setCurrentView(view);
@@ -183,7 +201,7 @@ const Index = () => {
         {/* Main Content */}
         <main>
           {currentView === "dashboard" && (
-            <Dashboard userRole={currentRole} />
+            <DashboardComponent userRole={currentRole} />
           )}
           
           {currentView === "report" && currentRole === "citizen" && (
@@ -264,4 +282,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Dashboard;

@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Shield, 
   AlertTriangle, 
   MapPin, 
   Users, 
   Menu,
-  Waves
+  Waves,
+  LogOut
 } from "lucide-react";
+import logo from "@/assets/oceanwatch-logo.png";
 
 interface HeaderProps {
   currentView: "citizen" | "official";
@@ -17,6 +21,17 @@ interface HeaderProps {
 
 export const Header = ({ currentView, onViewChange }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogout = () => {
+    localStorage.removeItem("oceanwatch_auth");
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    navigate("/");
+  };
 
   return (
     <header className="bg-card/95 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
@@ -24,7 +39,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
         {/* Logo and Title */}
         <div className="flex items-center space-x-3">
           <div className="flex items-center justify-center w-10 h-10 bg-ocean-gradient rounded-lg">
-            <Waves className="h-6 w-6 text-white" />
+            <img src={logo} alt="OceanWatch" className="h-6 w-6" />
           </div>
           <div>
             <h1 className="text-lg font-bold text-foreground">OceanWatch</h1>
@@ -58,7 +73,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
         </nav>
 
         {/* Status Indicators */}
-        <div className="hidden lg:flex items-center space-x-3">
+        <div className="hidden lg:flex items-center space-x-4">
           <Badge variant="outline" className="status-low">
             <div className="w-2 h-2 bg-success rounded-full mr-2" />
             System Active
@@ -72,6 +87,11 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
               Live Updates
             </div>
           </div>
+          
+          <Button variant="outline" size="sm" className="gap-2" onClick={handleLogout}>
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}
