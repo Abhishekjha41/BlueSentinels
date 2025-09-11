@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Dashboard as DashboardComponent } from "@/components/Dashboard";
 import { ReportForm } from "@/components/ReportForm";
 import { InteractiveMap } from "@/components/InteractiveMap";
+import { OfflineSyncNotification } from "@/components/OfflineSyncNotification";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -81,6 +82,9 @@ const Dashboard = () => {
       <Header currentView={currentRole} onViewChange={setCurrentRole} />
       
       <div className="container mx-auto px-4 lg:px-6 py-8">
+        {/* Offline Sync Notification */}
+        <OfflineSyncNotification />
+
         {/* Hero Section - Only show on dashboard */}
         {currentView === "dashboard" && (
           <div className="mb-8">

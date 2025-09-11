@@ -13,6 +13,7 @@ import {
   LogOut
 } from "lucide-react";
 import logo from "@/assets/oceanwatch-logo.png";
+import { useI18n } from "@/contexts/i18n";
 
 interface HeaderProps {
   currentView: "citizen" | "official";
@@ -23,6 +24,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { language, setLanguage, t } = useI18n();
 
   const handleLogout = () => {
     localStorage.removeItem("oceanwatch_auth");
@@ -58,7 +60,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
             className="gap-2"
           >
             <Users className="h-4 w-4" />
-            Citizen Portal
+            {t("citizen_portal")}
           </Button>
           
           <Button
@@ -68,29 +70,42 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
             className="gap-2"
           >
             <Shield className="h-4 w-4" />
-            Emergency Officials
+            {t("official_portal")}
           </Button>
         </nav>
 
-        {/* Status Indicators */}
+        {/* Status + Language */}
         <div className="hidden lg:flex items-center space-x-4">
           <Badge variant="outline" className="status-low">
             <div className="w-2 h-2 bg-success rounded-full mr-2" />
-            System Active
+            {t("system_active")}
           </Badge>
           
           <div className="text-right">
             <div className="text-sm font-medium text-foreground">
-              24/7 Monitoring
+              {t("monitoring_247")}
             </div>
             <div className="text-xs text-muted-foreground">
-              Live Updates
+              {t("live_updates")}
             </div>
           </div>
           
+          <select
+            className="text-sm border border-border rounded-md bg-transparent px-2 py-1"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as any)}
+            aria-label="Select language"
+          >
+            <option value="en">EN</option>
+            <option value="hi">हिं</option>
+            <option value="ta">தமி</option>
+            <option value="bn">বা</option>
+            <option value="te">తెలు</option>
+          </select>
+          
           <Button variant="outline" size="sm" className="gap-2" onClick={handleLogout}>
             <LogOut className="h-4 w-4" />
-            Logout
+            {t("logout")}
           </Button>
         </div>
 
@@ -118,7 +133,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
             className="w-full justify-start gap-2"
           >
             <Users className="h-4 w-4" />
-            Citizen Portal
+            {t("citizen_portal")}
           </Button>
           
           <Button
@@ -131,7 +146,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
             className="w-full justify-start gap-2"
           >
             <Shield className="h-4 w-4" />
-            Emergency Officials
+            {t("official_portal")}
           </Button>
         </div>
       )}

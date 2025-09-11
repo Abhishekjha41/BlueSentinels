@@ -50,6 +50,7 @@ export const ReportForm = ({ onSubmit }: ReportFormProps) => {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const handleLocationCapture = () => {
@@ -86,22 +87,43 @@ export const ReportForm = ({ onSubmit }: ReportFormProps) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
     const reportData = {
       ...formData,
       coordinates: location,
       timestamp: new Date().toISOString(),
       id: Math.random().toString(36).substr(2, 9)
     };
-    
-    onSubmit?.(reportData);
-    
-    toast({
-      title: "Report Submitted",
-      description: "Your hazard report has been submitted successfully and will be reviewed by emergency officials.",
-    });
+
+    // Offline-first queue using localStorage
+    try {
+      // Simulate network presence
+      const isOnline = navigator.onLine;
+      if (!isOnline) {
+        const existing = JSON.parse(localStorage.getItem("ow_offline_reports") || "[]");
+        existing.push({ ...reportData, mediaNames: mediaFiles.map(f => f.name), status: "queued" });
+        localStorage.setItem("ow_offline_reports", JSON.stringify(existing));
+        toast({
+          title: "Saved Offline",
+          description: "No internet detected. Your report is queued and will auto-sync.",
+        });
+      } else {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        onSubmit?.(reportData);
+        toast({
+          title: "Report Submitted",
+          description: "Your hazard report has been submitted successfully and will be reviewed by emergency officials.",
+        });
+      }
+    } catch (err) {
+      const existing = JSON.parse(localStorage.getItem("ow_offline_reports") || "[]");
+      existing.push({ ...reportData, mediaNames: mediaFiles.map(f => f.name), status: "queued" });
+      localStorage.setItem("ow_offline_reports", JSON.stringify(existing));
+      toast({
+        title: "Saved Offline",
+        description: "We hit a network error. Your report will sync when online.",
+      });
+    }
     
     // Reset form
     setFormData({
@@ -114,6 +136,7 @@ export const ReportForm = ({ onSubmit }: ReportFormProps) => {
       hasMedia: false
     });
     setLocation(null);
+    setMediaFiles([]);
     setIsSubmitting(false);
   };
 
@@ -242,10 +265,26 @@ export const ReportForm = ({ onSubmit }: ReportFormProps) => {
               <p className="text-sm text-muted-foreground mb-2">
                 Upload photos or videos of the hazard (optional but recommended)
               </p>
-              <Button type="button" variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
-                Choose Files
-              </Button>
+              <label className="inline-flex items-center justify-center cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    setMediaFiles(files);
+                    setFormData(prev => ({ ...prev, hasMedia: files.length > 0 }));
+                  }}
+                />
+                <Button type="button" variant="outline" size="sm">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Choose Files
+                </Button>
+              </label>
+              {mediaFiles.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-2">{mediaFiles.length} file(s) selected</p>
+              )}
             </div>
           </div>
 
