@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate, Link } from "react-router-dom";
 import { Shield, Users, ArrowLeft, Mail, Lock, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/oceanwatch-logo.png";
+import logo from "@/assets/oceanwatch-logo.png"; // TODO: Replace logo file if needed
 
 type UserRole = "citizen" | "official";
 
@@ -27,7 +27,7 @@ const Login = () => {
     // Simulate login process
     setTimeout(() => {
       // Store auth state (in a real app, this would be proper JWT handling)
-      localStorage.setItem("oceanwatch_auth", JSON.stringify({
+  localStorage.setItem("bluesentinels_auth", JSON.stringify({
         email,
         role,
         loginTime: new Date().toISOString()
@@ -35,7 +35,7 @@ const Login = () => {
 
       toast({
         title: "Login Successful",
-        description: `Welcome to OceanWatch, ${role === "citizen" ? "Citizen" : "Emergency Official"}!`,
+  description: `Welcome to BlueSentinels, ${role === "citizen" ? "Citizen" : "Emergency Official"}!`,
       });
 
       navigate("/dashboard");
@@ -54,9 +54,9 @@ const Login = () => {
           </Link>
           
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <img src={logo} alt="OceanWatch" className="h-10 w-10" />
+            <img src={logo} alt="BlueSentinels" className="h-10 w-10" />
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              OceanWatch
+              BlueSentinels
             </span>
           </div>
           
@@ -154,8 +154,8 @@ const Login = () => {
               <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Demo Credentials:</p>
                 <div className="text-xs space-y-1 text-muted-foreground">
-                  <p><strong>Citizen:</strong> citizen@oceanwatch.demo / demo123</p>
-                  <p><strong>Official:</strong> official@oceanwatch.demo / admin123</p>
+                  <p><strong>Citizen:</strong> citizen@bluesentinels.demo / demo123</p>
+                  <p><strong>Official:</strong> official@bluesentinels.demo / admin123</p>
                 </div>
               </div>
 
@@ -180,7 +180,7 @@ const Login = () => {
 
             <div className="mt-6 pt-6 border-t border-border/50">
               <p className="text-center text-sm text-muted-foreground">
-                New to OceanWatch?{" "}
+                New to BlueSentinels?{" "}
                 <Link to="/" className="text-primary hover:underline">
                   Learn more about our platform
                 </Link>

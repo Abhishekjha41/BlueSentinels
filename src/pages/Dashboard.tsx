@@ -31,7 +31,7 @@ const Dashboard = () => {
 
   // Check authentication
   useEffect(() => {
-    const authData = localStorage.getItem("oceanwatch_auth");
+  const authData = localStorage.getItem("bluesentinels_auth");
     if (!authData) {
       navigate("/login");
       return;
@@ -102,7 +102,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h1 className="text-2xl md:text-3xl font-bold">
-                      OceanWatch Platform
+                      BlueSentinels Platform
                     </h1>
                     <p className="text-white/90">
                       Real-time coastal hazard monitoring and community reporting

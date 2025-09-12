@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Shield, Users, Globe, AlertTriangle, MapPin, Camera, Smartphone, BarChart3, MessageSquare, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/ocean-monitoring-hero.jpg";
-import logo from "@/assets/oceanwatch-logo.png";
+import logo from "@/assets/oceanwatch-logo.png"; // TODO: Replace logo file if needed
 
 const Landing = () => {
   return (
@@ -14,9 +14,9 @@ const Landing = () => {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <img src={logo} alt="OceanWatch" className="h-8 w-8" />
+              <img src={logo} alt="BlueSentinels" className="h-8 w-8" />
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                OceanWatch
+                BlueSentinels
               </span>
             </div>
             
@@ -152,7 +152,7 @@ const Landing = () => {
                 Unified Crowdsourced Intelligence Platform
               </h2>
               <p className="text-lg text-muted-foreground">
-                OceanWatch combines citizen reporting, AI-powered social media monitoring, 
+                BlueSentinels combines citizen reporting, AI-powered social media monitoring, 
                 and real-time visualization to create the world's most comprehensive 
                 ocean hazard detection system.
               </p>
@@ -338,8 +338,8 @@ const Landing = () => {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center space-x-3 mb-6">
-              <img src={logo} alt="OceanWatch" className="h-8 w-8" />
-              <span className="text-xl font-bold">OceanWatch</span>
+              <img src={logo} alt="BlueSentinels" className="h-8 w-8" />
+              <span className="text-xl font-bold">BlueSentinels</span>
             </div>
             <p className="text-muted-foreground mb-6">
               Empowering communities through crowdsourced ocean hazard intelligence

@@ -12,7 +12,7 @@ const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
 const translations: Record<SupportedLanguage, Record<string, string>> = {
   en: {
-    app_title: "OceanWatch",
+  app_title: "BlueSentinels",
     app_tagline: "Coastal Hazard Monitor",
     citizen_portal: "Citizen Portal",
     official_portal: "Emergency Officials",

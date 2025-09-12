@@ -12,7 +12,7 @@ import {
   Waves,
   LogOut
 } from "lucide-react";
-import logo from "@/assets/oceanwatch-logo.png";
+import logo from "@/assets/oceanwatch-logo.png"; // TODO: Replace logo file if needed
 import { useI18n } from "@/contexts/i18n";
 
 interface HeaderProps {
@@ -27,7 +27,7 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
   const { language, setLanguage, t } = useI18n();
 
   const handleLogout = () => {
-    localStorage.removeItem("oceanwatch_auth");
+  localStorage.removeItem("bluesentinels_auth");
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
@@ -41,10 +41,10 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
         {/* Logo and Title */}
         <div className="flex items-center space-x-3">
           <div className="flex items-center justify-center w-10 h-10 bg-ocean-gradient rounded-lg">
-            <img src={logo} alt="OceanWatch" className="h-6 w-6" />
+            <img src={logo} alt="BlueSentinels" className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-foreground">OceanWatch</h1>
+            <h1 className="text-lg font-bold text-foreground">BlueSentinels</h1>
             <p className="text-xs text-muted-foreground hidden sm:block">
               Coastal Hazard Monitor
             </p>

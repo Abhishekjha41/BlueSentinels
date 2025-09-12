@@ -27,7 +27,7 @@ const NotFound = () => {
           <h2 className="text-xl font-semibold text-foreground mb-2">Page Not Found</h2>
           <p className="text-muted-foreground mb-6">
             The page you're looking for doesn't exist or has been moved. 
-            Return to the OceanWatch dashboard to continue monitoring coastal hazards.
+            Return to the BlueSentinels dashboard to continue monitoring coastal hazards.
           </p>
           
           <Button 

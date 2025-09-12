@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   AlertTriangle, 
   MapPin, 
@@ -19,9 +23,27 @@ import {
   Zap,
   TrendingDown,
   CheckCircle,
-  XCircle
+  XCircle,
+  Calendar as CalendarIcon,
+  Search,
+  Download,
+  Settings,
+  Bell,
+  Eye,
+  EyeOff,
+  Maximize2,
+  Minimize2,
+  ChevronDown,
+  ChevronUp,
+  Waves,
+  Droplets,
+  Wind,
+  Thermometer,
+  Gauge
 } from "lucide-react";
 import { SocialTrendsPanel } from "./SocialTrendsPanel";
+import { InteractiveMap } from "./InteractiveMap";
+import { format } from "date-fns";
 
 interface Incident {
   id: string;
@@ -139,6 +161,15 @@ export const Dashboard = ({ userRole }: DashboardProps) => {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedSource, setSelectedSource] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [isMapExpanded, setIsMapExpanded] = useState<boolean>(false);
+  const [showFilters, setShowFilters] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<string>("overview");
 
   const filteredIncidents = useMemo(() => {
     return mockIncidents.filter(incident => {
@@ -146,9 +177,21 @@ export const Dashboard = ({ userRole }: DashboardProps) => {
       const typeMatch = selectedType === "all" || incident.type === selectedType;
       const sourceMatch = selectedSource === "all" || incident.source === selectedSource;
       const statusMatch = selectedStatus === "all" || incident.status === selectedStatus;
-      return severityMatch && typeMatch && sourceMatch && statusMatch;
+      
+      // Search filter
+      const searchMatch = !searchQuery || 
+        incident.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        incident.location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        incident.reporter.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Date range filter
+      const incidentDate = new Date(incident.timestamp);
+      const dateMatch = !dateRange.from || !dateRange.to || 
+        (incidentDate >= dateRange.from && incidentDate <= dateRange.to);
+      
+      return severityMatch && typeMatch && sourceMatch && statusMatch && searchMatch && dateMatch;
     });
-  }, [selectedSeverity, selectedType, selectedSource, selectedStatus]);
+  }, [selectedSeverity, selectedType, selectedSource, selectedStatus, searchQuery, dateRange]);
 
   // Analytics for officials
   const analytics = useMemo(() => {
@@ -181,71 +224,121 @@ export const Dashboard = ({ userRole }: DashboardProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-900 dark:via-blue-900 dark:to-teal-900">
+      {/* Header Section */}
+      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg ocean-gradient flex items-center justify-center">
+                <Waves className="h-6 w-6 text-white" />
+              </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Incidents</p>
-                <p className="text-2xl font-bold text-foreground">{analytics.total}</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                  Coastal Pulse Stream
+                </h1>
+                <p className="text-sm text-muted-foreground">Ocean Hazard Monitoring & Social Analytics</p>
               </div>
-              <AlertTriangle className="h-8 w-8 text-warning" />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">High Priority</p>
-                <p className="text-2xl font-bold text-destructive">{analytics.highPriority}</p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-destructive" />
+            
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <Bell className="h-4 w-4 mr-2" />
+                Alerts
+              </Button>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Verified Reports</p>
-                <p className="text-2xl font-bold text-success">{analytics.verified}</p>
-              </div>
-              <CheckCircle className="h-8 w-8 text-success" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {userRole === "official" ? (
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Avg Response Time</p>
-                  <p className="text-2xl font-bold text-primary">{analytics.avgResponseTime}m</p>
-                </div>
-                <Zap className="h-8 w-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Reports Today</p>
-                  <p className="text-2xl font-bold text-foreground">12</p>
-                </div>
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+          </div>
+        </div>
       </div>
+
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Incidents</p>
+                  <p className="text-3xl font-bold text-foreground">{analytics.total}</p>
+                  <p className="text-xs text-muted-foreground mt-1">+2 from yesterday</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                  <AlertTriangle className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-red-500 hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">High Priority</p>
+                  <p className="text-3xl font-bold text-destructive">{analytics.highPriority}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Requires immediate attention</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-green-500 hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Verified Reports</p>
+                  <p className="text-3xl font-bold text-success">{analytics.verified}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{Math.round((analytics.verified / analytics.total) * 100)}% verified</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {userRole === "official" ? (
+            <Card className="border-l-4 border-l-purple-500 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Avg Response Time</p>
+                    <p className="text-3xl font-bold text-primary">{analytics.avgResponseTime}m</p>
+                    <p className="text-xs text-muted-foreground mt-1">Target: &lt;15min</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                    <Zap className="h-6 w-6 text-purple-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-l-4 border-l-teal-500 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Reports Today</p>
+                    <p className="text-3xl font-bold text-foreground">12</p>
+                    <p className="text-xs text-muted-foreground mt-1">Community engagement</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
+                    <Users className="h-6 w-6 text-teal-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
 
       {/* Official Analytics */}
       {userRole === "official" && (
