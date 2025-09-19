@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,14 +8,10 @@ import {
   Layers, 
   ZoomIn, 
   ZoomOut, 
-  RotateCcw,
-  Camera,
-  Clock,
-  User,
   Filter,
   Activity,
-  Twitter,
-  Users,
+  Clock,
+  User,
   AlertTriangle
 } from "lucide-react";
 
@@ -136,7 +132,6 @@ const severityLabels = {
 
 export const InteractiveMap = ({ incidents = mockIncidents, onIncidentSelect }: InteractiveMapProps) => {
   const [selectedIncident, setSelectedIncident] = useState<MapIncident | null>(null);
-  const [mapView, setMapView] = useState({ zoom: 4, center: [-98.5795, 39.8282] }); // Center of US
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [showHotspots, setShowHotspots] = useState(true);
 
@@ -151,29 +146,9 @@ export const InteractiveMap = ({ incidents = mockIncidents, onIncidentSelect }: 
   };
 
   // Filter incidents by source
-  const filteredIncidents = useMemo(() => {
-    return incidents.filter(incident => 
-      sourceFilter === "all" || incident.source === sourceFilter
-    );
-  }, [incidents, sourceFilter]);
-
-  // Calculate hotspots (density clusters)
-  const hotspots = useMemo(() => {
-    if (!showHotspots) return [];
-    
-    const clusters: { [key: string]: MapIncident[] } = {};
-    
-    // Group incidents by rounded coordinates (simplified clustering)
-    filteredIncidents.forEach(incident => {
-      const lat = Math.round(incident.location.coordinates[1] * 2) / 2;
-      const lng = Math.round(incident.location.coordinates[0] * 2) / 2;
-      const key = `${lat},${lng}`;
-      
-      if (!clusters[key]) {
-        clusters[key] = [];
-      }
-      clusters[key].push(incident);
-    });
+  const filteredIncidents = incidents.filter(incident => 
+    sourceFilter === "all" || incident.source === sourceFilter
+  );
     
     // Convert to hotspot objects
     return Object.entries(clusters)

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
-import { Dashboard as DashboardComponent } from "@/components/Dashboard";
+import { Dashboard as DashboardComponent } from "@/components/Dashboard_clean";
 import { ReportForm } from "@/components/ReportForm";
-import { InteractiveMap } from "@/components/InteractiveMap";
+import { InteractiveMap } from "@/components/InteractiveMap_simple";
 import { OfflineSyncNotification } from "@/components/OfflineSyncNotification";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

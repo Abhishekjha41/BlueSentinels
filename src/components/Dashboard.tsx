@@ -1,123 +1,35 @@
-import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  AlertTriangle, 
-  MapPin, 
-  Clock, 
-  TrendingUp,
-  Users,
-  Camera,
-  Filter,
-  RefreshCw,
-  BarChart3,
-  Activity,
-  Shield,
-  Globe,
-  Zap,
-  TrendingDown,
-  CheckCircle,
-  XCircle
-} from "lucide-react";
+import { AlertTriangle, TrendingUp } from "lucide-react";
 import { SocialTrendsPanel } from "./SocialTrendsPanel";
+import { InteractiveMap } from './InteractiveMap_simple';
 
-interface Incident {
-  id: string;
-  type: "tsunami" | "flooding" | "high-waves" | "unusual-tides" | "coastal-damage";
-  severity: "low" | "moderate" | "high" | "critical";
-  location: {
-    name: string;
-    coordinates: [number, number];
-  };
-  description: string;
-  reporter: string;
-  timestamp: string;
-  hasMedia: boolean;
-  verified: boolean;
-  source: "citizen" | "official" | "social" | "sensor";
-  responseTime?: number; // minutes
-  status: "active" | "investigating" | "resolved" | "false-alarm";
-}
-
-interface DashboardProps {
-  userRole: "citizen" | "official";
-}
-
-// Mock data for demonstration
-const mockIncidents: Incident[] = [
-  {
-    id: "1",
-    type: "high-waves",
-    severity: "high",
-    location: { name: "Santa Monica Beach, CA", coordinates: [-118.4912, 34.0195] },
-    description: "Waves reaching 12+ feet, dangerous conditions for swimmers",
-    reporter: "Beach Safety Officer",
-    timestamp: "2024-09-10T14:30:00Z",
-    hasMedia: true,
-    verified: true,
-    source: "official",
-    responseTime: 5,
-    status: "active"
-  },
-  {
-    id: "2", 
-    type: "flooding",
-    severity: "moderate",
-    location: { name: "Miami Beach, FL", coordinates: [-80.1300, 25.7907] },
-    description: "Street flooding on Ocean Drive due to king tide",
-    reporter: "Citizen Report",
-    timestamp: "2024-09-10T13:15:00Z",
-    hasMedia: true,
-    verified: false,
-    source: "citizen",
-    responseTime: 15,
-    status: "investigating"
-  },
-  {
-    id: "3",
-    type: "unusual-tides", 
-    severity: "low",
-    location: { name: "Monterey Bay, CA", coordinates: [-121.9018, 36.6002] },
-    description: "Unusually low tide exposing sea floor areas",
-    reporter: "Marine Biologist",
-    timestamp: "2024-09-10T12:00:00Z",
-    hasMedia: false,
-    verified: true,
-    source: "official",
-    responseTime: 2,
-    status: "resolved"
-  },
-  {
-    id: "4",
-    type: "tsunami",
-    severity: "critical",
-    location: { name: "Hilo Bay, HI", coordinates: [-155.0890, 19.7297] },
-    description: "Tsunami warning issued - water receding rapidly",
-    reporter: "Pacific Tsunami Warning Center",
-    timestamp: "2024-09-10T10:20:00Z",
-    hasMedia: false,
-    verified: true,
-    source: "sensor",
-    responseTime: 1,
-    status: "active"
-  },
-  {
-    id: "5",
-    type: "high-waves",
-    severity: "moderate",
-    location: { name: "Santa Monica Beach, CA", coordinates: [-118.4912, 34.0195] },
-    description: "Waves getting bigger, stay away from water",
-    reporter: "@beachgoer123",
-    timestamp: "2024-09-10T14:15:00Z",
-    hasMedia: false,
-    verified: false,
-    source: "social",
-    responseTime: 30,
-    status: "investigating"
-  }
-];
+export const Dashboard = () => {
+  return (
+    <div className="container mx-auto py-6 space-y-6">
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">Ocean Watch Dashboard</h1>
+        <p className="text-muted-foreground">
+          Monitor coastal incidents and social media trends in real-time
+        </p>
+      </div>
+      
+      {/* Main Content */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Map Section */}
+        <div className="xl:col-span-2">
+          <InteractiveMap />
+        </div>
+        
+        {/* Social Trends Section */}
+        <div className="xl:col-span-1">
+          <SocialTrendsPanel />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const severityConfig = {
   low: { label: "Low", className: "status-low", icon: "🟢" },
