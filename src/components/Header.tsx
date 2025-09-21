@@ -9,7 +9,7 @@ import {
   MapPin, 
   Users, 
   Menu,
-  Waves,
+  ChartNoAxesCombined,
   LogOut
 } from "lucide-react";
 import logo from "@/assets/oceanwatch-logo.png"; // TODO: Replace logo file if needed
@@ -71,6 +71,16 @@ export const Header = ({ currentView, onViewChange }: HeaderProps) => {
           >
             <Shield className="h-4 w-4" />
             {t("official_portal")}
+          </Button>
+
+          <Button
+            variant={currentView === "analyst" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewChange("analyst")}
+            className="gap-2"
+          >
+            <ChartNoAxesCombined className="h-4 w-4" />
+            {t("analyst_portal")}
           </Button>
         </nav>
 

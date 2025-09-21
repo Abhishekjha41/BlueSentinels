@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Dashboard as DashboardComponent } from "@/components/Dashboard_clean";
 import { ReportForm } from "@/components/ReportForm";
-import { InteractiveMap } from "@/components/InteractiveMap_simple";
+import  InteractiveMap  from "@/components/InteractiveMap_simple";
 import { OfflineSyncNotification } from "@/components/OfflineSyncNotification";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,14 +19,15 @@ import {
   Waves,
   Smartphone,
   Globe,
-  Zap
+  Zap,
+  ChartNoAxesCombined
 } from "lucide-react";
 
 type ViewType = "dashboard" | "report" | "map";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [currentRole, setCurrentRole] = useState<"citizen" | "official">("citizen");
+  const [currentRole, setCurrentRole] = useState<"citizen" | "official" | "analyst">("citizen");
   const [currentView, setCurrentView] = useState<ViewType>("dashboard");
 
   // Check authentication
@@ -69,7 +70,7 @@ const Dashboard = () => {
       label: "Live Map", 
       icon: Map, 
       description: "Interactive incident visualization",
-      roles: ["citizen", "official"] as ("citizen" | "official")[]
+      roles: ["official" , "analyst"] as ("official" | "analyst")[],
     }
   ];
 
@@ -155,7 +156,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-semibold text-foreground">
-                {currentRole === "citizen" ? "Citizen Portal" : "Emergency Operations"}
+                {currentRole === "citizen" ? "Citizen Portal" : (currentRole=== "analyst" ? "Analyst Dashboard" : "Emergency Operations")}
               </h2>
               <p className="text-sm text-muted-foreground">
                 {currentRole === "citizen" 
@@ -174,10 +175,18 @@ const Dashboard = () => {
                   <Users className="h-3 w-3 mr-1" />
                   Citizen Access
                 </>
-              ) : (
+              )
+              :
+              currentRole === "official"  ? (
                 <>
                   <Shield className="h-3 w-3 mr-1" />
                   Official Access
+                </>
+              )
+              : (
+                <>
+                  <ChartNoAxesCombined className="h-3 w-3 mr-1" />
+                  Analyst Access
                 </>
               )}
             </Badge>
@@ -205,7 +214,7 @@ const Dashboard = () => {
         {/* Main Content */}
         <main>
           {currentView === "dashboard" && (
-            <DashboardComponent userRole={currentRole} />
+            <DashboardComponent currentRole={currentRole} />
           )}
           
           {currentView === "report" && currentRole === "citizen" && (
@@ -228,7 +237,7 @@ const Dashboard = () => {
             </div>
           )}
           
-          {currentView === "map" && (
+          {currentView === "map" && (currentRole === "official" || currentRole === "analyst") && (
             <InteractiveMap 
               onIncidentSelect={(incident) => {
                 console.log("Incident selected:", incident);
@@ -238,7 +247,7 @@ const Dashboard = () => {
         </main>
 
         {/* Quick Actions Footer */}
-        <div className="mt-12 pt-8 border-t border-border/50">
+        {/* <div className="mt-12 pt-8 border-t border-border/50">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="group hover:shadow-professional transition-shadow cursor-pointer">
               <CardContent className="p-4 text-center">
@@ -280,7 +289,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

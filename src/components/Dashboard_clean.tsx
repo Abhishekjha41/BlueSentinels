@@ -1,11 +1,14 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, TrendingUp, CheckCircle, Activity } from "lucide-react";
 import { SocialTrendsPanel } from "./SocialTrendsPanel";
-import { InteractiveMap } from './InteractiveMap_simple';
+import  InteractiveMap  from "./InteractiveMap_simple";
+import AnalystPanel from "./AnalystPanel";
 
-export const Dashboard = () => {
-  // Mock data for demonstration
+type Role = "citizen" | "official" | "analyst";
+
+export const Dashboard: React.FC<{ currentRole?: Role }> = ({ currentRole = "citizen" }) => {
   const stats = {
     activeIncidents: 8,
     highPriority: 3,
@@ -14,15 +17,13 @@ export const Dashboard = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">Ocean Watch Dashboard</h1>
         <p className="text-muted-foreground">
           Monitor coastal incidents and social media trends in real-time
         </p>
       </div>
-      
-      {/* Stats Overview */}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="p-6">
@@ -83,19 +84,21 @@ export const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {currentRole === "analyst" && <AnalystPanel />}
+      {currentRole === "official"&& (
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="xl:col-span-2">
+            <InteractiveMap />
+          </div>
+
+          <div className="xl:col-span-1">
+            <SocialTrendsPanel />
+          </div>
+        </div>
+      )}
+
       
-      {/* Main Content */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Map Section */}
-        <div className="xl:col-span-2">
-          <InteractiveMap />
-        </div>
-        
-        {/* Social Trends Section */}
-        <div className="xl:col-span-1">
-          <SocialTrendsPanel />
-        </div>
-      </div>
     </div>
   );
 };
